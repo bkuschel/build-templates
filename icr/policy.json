@@ -1,0 +1,17 @@
+{
+    "roles": [
+        {
+            "role_id": "crn:v1:bluemix:public:iam::::serviceRole:Writer"
+        }
+    ],
+    "resources": [
+        {
+            "attributes": [
+                {
+                    "name": "serviceName",
+                    "value": "container-registry"
+                }
+            ]
+        }
+    ]
+}
