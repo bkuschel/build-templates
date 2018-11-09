@@ -1,6 +1,6 @@
 # IBM Container Registry Helper 
 
-This script provisions (or verifies) an IBM Cloud service ID with
+The scripts provision (or verifies) an IBM Cloud service ID with
 permissions as secified by the policy.json file. The user must be logged into 
 IBM Cloud with a user that has the `Administrator` role assigned to the 
 `container-registry` service for the region(s). See `iamcloud iam user-policy-create` 
@@ -67,14 +67,14 @@ Should be run from the repository root directory.
 
 ```shell
 # Usage assumes that the user has IAM Owner permissions for the project.
-icr/helper.sh
+icr/helper.(sh|ps1)
 ```
 
-Optionally, `helper.sh` accepts two positional arguments to specify
+Optionally, `helper.(sh|ps1)` accepts two positional arguments to specify
 the namespace and kubernetes service account used:
 
 ```shell
-icr/helper.sh $MY_KUBE_NAMESPACE builder-serviceaccount
+icr/helper.(sh|ps1) $MY_KUBE_NAMESPACE builder-serviceaccount
 ```
 
 This will output a log of operations performed or skipped:

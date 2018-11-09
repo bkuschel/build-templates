@@ -84,10 +84,13 @@ else
     ibmcloud iam service-id-create $IBMCLOUD_SERVICEID_NAME -d "Knative Builder"
 fi
 
+echo "Creating policy defined in icr/policy.json for service ID $IBMCLOUD_SERVICEID_NAME ..."
 ibmcloud iam service-policy-create $IBMCLOUD_SERVICEID_NAME --file icr/policy.json 2>&3 || exit 2
 
 # Create the API Key key for the service account.
+echo "Creating API Key called $IBMCLOUD_SERVICEID_NAME for service ID $IBMCLOUD_SERVICEID_NAME ..."
 ibmcloud iam service-api-key-create $IBMCLOUD_SERVICEID_NAME $IBMCLOUD_SERVICEID_NAME --file knative-builder-key.json 2>&3 || exit 2
+
 
 cat <<EOF | kubectl $KUBECTL_FLAGS apply -f - 2>&3
 apiVersion: v1
@@ -102,14 +105,15 @@ kind: Secret
 metadata:
   name: icr-creds
   annotations:
-    build.knative.dev/docker-0: https://registry.ng.bluemix.net
-    build.knative.dev/docker-1: https://registry.eu-de.bluemix.net
-    build.knative.dev/docker-2: https://registry.eu-gb.bluemix.net
-    build.knative.dev/docker-3: https://registry.au-syd.bluemix.net
+    build.knative.dev/docker-0: registry.ng.bluemix.net
+    build.knative.dev/docker-1: registry.bluemix.net
+    build.knative.dev/docker-2: registry.eu-de.bluemix.net
+    build.knative.dev/docker-3: registry.eu-gb.bluemix.net
+    build.knative.dev/docker-4: registry.au-syd.bluemix.net
 type: kubernetes.io/basic-auth
 data:
   username: $(echo -n "iamapikey" | openssl base64 -a -A) # Should be aWFtYXBpa2V5
-  password: $(openssl base64 -a -A < knative-builder-key.json)
+  password: $(cat knative-builder-key.json | sed 's/[[:space:]]//g' | grep -Po '(?<="apikey":")(.*?)(?=",)' | openssl base64 -a -A )
 EOF
 
 readonly EXIT=$?

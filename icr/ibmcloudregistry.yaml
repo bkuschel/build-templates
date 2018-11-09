@@ -1,0 +1,41 @@
+apiVersion: build.knative.dev/v1alpha1
+kind: BuildTemplate
+metadata:
+  name: ibmcloudregistry
+spec:
+  parameters:
+  - description: Where to publish the resulting image
+    name: IMAGE
+  - default: Dockerfile
+    description: The name of the Dockerfile
+    name: DOCKERFILE
+  - default: "false"
+    description: If specified, the base images are pulled even if an image with a
+      matching tag already exists on the build host.
+    name: PULL
+  - default: "false"
+    description: If specified, cached image layers from previous builds are not used
+      in this build.
+    name: NO_CACHE
+  - default: /workspace
+    description: The directory container the app (build context)
+    name: DIRECTORY
+  - default: "--build-arg=BUILDER=icrbuild" 
+    description: Specify an additional build arguments in the format '--build-arg=KEY=VALUE'. 
+      The value of each build argument is available as an environment variable when you 
+      specify an ARG line that matches the key in your Dockerfile. Multiple build-args are 
+      seperated by a space
+    name: BUILD_ARGS
+  steps:
+  - args:
+    - --file
+    - ${DOCKERFILE}
+    - --tag
+    - ${IMAGE}
+    - --pull=${PULL}
+    - --no-cache=${NO_CACHE}
+    - ${BUILD_ARGS}
+    - .
+    image: ibmcom/icrbuild:latest
+    name: build
+    workingDir: ${DIRECTORY}

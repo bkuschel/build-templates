@@ -1,0 +1,16 @@
+# Example of how to build the icrbuilder, using the icrbuilder
+apiVersion: build.knative.dev/v1alpha1
+kind: Build
+metadata:
+  name: icrbuilder
+spec:
+  serviceAccountName: builder
+  source:
+    git:
+      revision: master
+      url: https://github.com/IBM-Cloud/container-registry-builder
+  template:
+    arguments:
+    - name: IMAGE
+      value: registry.ng.bluemix.net/ibmcom/icrbuild
+    name: ibmcloudregistry
